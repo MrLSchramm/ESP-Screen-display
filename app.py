@@ -1,4 +1,5 @@
 from flask import Flask, request
+from datetime import datetime
 
 app = Flask(__name__)
 current_message = "Hello from Flask!"
@@ -9,7 +10,9 @@ def index():
 
 @app.route('/get')
 def get_message():
-    return current_message
+    # Formats the current time (e.g., 18:38:26)
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    return f"[{timestamp}] {current_message}"
 
 @app.route('/set')
 def set_message():
