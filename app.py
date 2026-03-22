@@ -2,8 +2,8 @@ from flask import Flask, request
 from datetime import datetime
 
 app = Flask(__name__)
-# Initialises with a default format the ESP understands
-current_command = "STP"
+# Initialises with a default ID and command
+current_payload = f"{datetime.now().strftime('%H%M%S')}_STP"
 
 @app.route('/')
 def index():
@@ -11,16 +11,16 @@ def index():
 
 @app.route('/get')
 def get_message():
-    # Generates a numeric ID based on the current time (e.g., 185201)
-    # Then attaches the command: "185201_CW"
-    timestamp_id = datetime.now().strftime("%H%M%S")
-    return f"{timestamp_id}_{current_command}"
+    # Now just returns the stored payload without changing the time
+    return current_payload
 
 @app.route('/set')
 def set_message():
-    global current_command
-    command = request.args.get('message') # You send "CW" or "CCW"
+    global current_payload
+    command = request.args.get('message')
     if command:
-        current_command = command
+        # Generate the new ID ONLY when the button is pressed
+        timestamp_id = datetime.now().strftime("%H%M%S")
+        current_payload = f"{timestamp_id}_{command}"
         return "Command set!"
     return "No command", 400
